@@ -22,12 +22,16 @@ public:
         this->receiveAddress = boost::asio::ip::address::from_string(ipAddress);
         this->receivePort = port;
     }
+    void setListenerThreadCount(uint8_t listenerThreadCount) {
+        this->listenerThreadCount = listenerThreadCount;
+    }
 protected:
     boost::asio::io_context ioContext;
     boost::asio::ip::address targetAddress;
     boost::asio::ip::address receiveAddress;
     unsigned short receivePort;
     unsigned short targetPort;
+    uint8_t listenerThreadCount = std::thread::hardware_concurrency(); //Number of cores
 };
 
 #endif //ETHERNETNETWORKDRIVER_H

@@ -4,14 +4,7 @@
 #include<ros/ros.h>
 #include<gcm/drivers/ethernet/UDPDriver.h>
 
-void handleCallback1(NetworkMessage networkMessage){
-    std::cout<<std::string(((char*)networkMessage.data), networkMessage.size) <<std::endl;
-}
 
-void handleCallback2(NetworkMessage networkMessage){
-    std::cout<<"Size:"<<networkMessage.size<<"\n";
-    std::cout<<std::string(((char*)networkMessage.data), networkMessage.size) <<std::endl;
-}
 
 int main(){
     gcm::UDPDriver listener, sender;
@@ -20,13 +13,16 @@ int main(){
     listener.listen();
     listener.addCallback(handleCallback1);
     listener.addCallback(handleCallback2);
+    listener.setListenerThreadCount(1);
     NetworkMessage nm;
     std::string data = "AAA!Helloaskdaşlsdkaşlsdkasldasdasdlaksdşlasdlkalsşdkaşlsdasdasdasdasd!Helloaskdaşlsdkaşlsdkasldasdasdlaksdşlasdlkalsşdkaşlsdasdasdasdasd!";
     nm.data = (void*)data.data();
     nm.size = data.size();
 
-    for (int i = 0; i < 1000000; ++i) {
+    for (int i = 0; i < 10; ++i) {
         sender.send(nm);
+        std::this_thread::sleep_for(std::chrono::seconds (1));
+
     }
     std::cout<<"HELLOaaO"<<std::endl;
 }

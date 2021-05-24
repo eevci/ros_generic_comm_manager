@@ -16,19 +16,12 @@ namespace gcm{
         this->workerThreads.join_all();
     }
 
-    void UDPDriver::resetIOService(){
-        if(this->ioContext.stopped()){
-            this->ioContext.restart();
-        }
-    }
-
     void UDPDriver::listen() {
         this->socket->bind(BOOST_UDP_ENDPOINT(this->receiveAddress, this->receivePort));
         this->doReceive();
-        for(int x = 0; x < 4; ++x)
+        for(int x = 0; x < this->listenerThreadCount; ++x)
             this->workerThreads.create_thread(boost::bind(&boost::asio::io_context::run, &ioContext));
-        this->resetIOService();
-
+        std::cout << "Listening with "<< (int)this->listenerThreadCount <<" threads\n";
     }
 
     void UDPDriver::doReceive() {
