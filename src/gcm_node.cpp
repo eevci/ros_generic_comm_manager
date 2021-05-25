@@ -4,7 +4,14 @@
 #include<ros/ros.h>
 #include<gcm/drivers/ethernet/UDPDriver.h>
 
+void handleCallback1(NetworkMessage networkMessage){
+    std::cout<<std::string(((char*)networkMessage.data), networkMessage.size) <<std::endl;
+}
 
+void handleCallback2(NetworkMessage networkMessage){
+    std::cout<<"Size:"<<networkMessage.size<<"\n";
+    std::cout<<std::string(((char*)networkMessage.data), networkMessage.size) <<std::endl;
+}
 
 int main(){
     gcm::UDPDriver listener, sender;

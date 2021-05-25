@@ -10,10 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp)
 
 catkin_package()
-add_service_files(
+#[[add_service_files(
         FILES
         CreateUDPComm.srv
-)
+)]]
 ###########
 ## Build ##
 ###########
@@ -52,7 +52,11 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Add gtest based cpp test target and link libraries
 if (CATKIN_ENABLE_TESTING)
- catkin_add_gtest(${PROJECT_NAME}_test test/TestUDPDriver.cpp)
+ catkin_add_gtest(${PROJECT_NAME}_test
+         test/main.cpp
+         test/gcm/drivers/ethernet/TestUDPDriver.cpp
+         test/gcm/drivers/ethernet/TestTCPDriver.cpp
+         )
  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
 

@@ -1,7 +1,7 @@
 //
 // Created by enver on 23.05.2021.
 //
-#include "gcm/drivers/ethernet/TestUDPDriver.h"
+#include "TestUDPDriver.h"
 
 
 TEST_F(TestUDPDriver, emptyEndpointTest) {
@@ -126,9 +126,4 @@ TEST_F(TestUDPDriver, MultipleLongMessageToTwelveThreadListener) {
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
