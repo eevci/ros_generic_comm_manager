@@ -6,6 +6,7 @@
 #define SRC_TESTUDPDRIVER_H
 #include "gtest/gtest.h"
 #include "gcm/drivers/ethernet/UDPDriver.h"
+#include "gcm/NetworkMessage.h"
 
 class TestUDPDriver : public ::testing::Test{
 public:
@@ -27,8 +28,8 @@ protected:
 
     void sendMessage(const std::string& messageToSend, int count){
         for(int i = 0; i<count; i++){
-            NetworkMessage nm;
-            nm.data = (void*)(messageToSend+std::string(std::to_string(i))).data();
+            gcm::NetworkMessage nm;
+            nm.data.assign(messageToSend.begin(), messageToSend.end());
             nm.size = messageToSend.size();
             senderUDPDriver->send(nm);
         }

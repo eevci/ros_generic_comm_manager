@@ -13,9 +13,9 @@ TEST_F(TestTCPDriver, singleShortMessageToOneThreadListener) {
     listenerTCPDriver->setListenerThreadCount(1);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
-            ;}
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
+                ;}
     );
     this->sendMessage(messageToSend, 1);
 }
@@ -25,32 +25,32 @@ TEST_F(TestTCPDriver, singleShortMessageToTwelveThreadListener) {
     listenerTCPDriver->setListenerThreadCount(12);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-    [messageToSend] (NetworkMessage nm) {
-    EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
-    ;}
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
+                ;}
     );
     this->sendMessage(messageToSend, 1);
 }
 
 TEST_F(TestTCPDriver, singleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1023);
     listenerTCPDriver->setListenerThreadCount(1);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1);
 }
 
 TEST_F(TestTCPDriver, singleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1023);
     listenerTCPDriver->setListenerThreadCount(12);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1);
@@ -61,8 +61,8 @@ TEST_F(TestTCPDriver, MultipleShortMessageToOneThreadListener) {
     listenerTCPDriver->setListenerThreadCount(1);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
@@ -73,8 +73,8 @@ TEST_F(TestTCPDriver, MultipleShortMessageToFourThreadListener) {
     listenerTCPDriver->setListenerThreadCount(4);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
@@ -85,44 +85,44 @@ TEST_F(TestTCPDriver, MultipleShortMessageToTwelveThreadListener) {
     listenerTCPDriver->setListenerThreadCount(12);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
 }
 
 TEST_F(TestTCPDriver, MultipleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1023);
     listenerTCPDriver->setListenerThreadCount(1);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
 }
 
 TEST_F(TestTCPDriver, MultipleLongMessageToFourThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1023);
     listenerTCPDriver->setListenerThreadCount(4);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
 }
 
 TEST_F(TestTCPDriver, MultipleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1023);
     listenerTCPDriver->setListenerThreadCount(12);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
