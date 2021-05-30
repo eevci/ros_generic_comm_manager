@@ -37,15 +37,14 @@ namespace gcm{
             return;
         }
         NetworkMessage networkMessage;
-        networkMessage.data = recv_buffer.data();
-        networkMessage.size = bytesTransferred;
+        networkMessage.data.assign(recv_buffer.begin(), bytesTransferred);
         this->notify(networkMessage);
     }
 
     bool UDPDriver::send(NetworkMessage networkMessage) {
         boost::system::error_code err;
         BOOST_UDP_ENDPOINT endpoint {this->targetAddress, this->targetPort};
-        bool sent = socket->send_to(boost::asio::buffer(networkMessage.data,networkMessage.size), endpoint, 0, err);
+        bool sent = socket->send_to(boost::asio::buffer(networkMessage.data,networkMessage.data.size()), endpoint, 0, err);
         std::this_thread::sleep_for(std::chrono::microseconds (100));
         return sent>0;
     }

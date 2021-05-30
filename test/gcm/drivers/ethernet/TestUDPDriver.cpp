@@ -13,9 +13,9 @@ TEST_F(TestUDPDriver, singleShortMessageToOneThreadListener) {
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
-            ;}
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
+                ;}
     );
     this->sendMessage(messageToSend, 1);
 }
@@ -25,32 +25,32 @@ TEST_F(TestUDPDriver, singleShortMessageToTwelveThreadListener) {
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-    [messageToSend] (NetworkMessage nm) {
-    EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
-    ;}
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
+                ;}
     );
     this->sendMessage(messageToSend, 1);
 }
 
 TEST_F(TestUDPDriver, singleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1024);
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1);
 }
 
 TEST_F(TestUDPDriver, singleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1024);
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1);
@@ -61,8 +61,8 @@ TEST_F(TestUDPDriver, MultipleShortMessageToOneThreadListener) {
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
@@ -73,8 +73,8 @@ TEST_F(TestUDPDriver, MultipleShortMessageToFourThreadListener) {
     listenerUDPDriver->setListenerThreadCount(4);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
@@ -85,44 +85,44 @@ TEST_F(TestUDPDriver, MultipleShortMessageToTwelveThreadListener) {
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
 }
 
 TEST_F(TestUDPDriver, MultipleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1024);
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
 }
 
 TEST_F(TestUDPDriver, MultipleLongMessageToFourThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1024);
     listenerUDPDriver->setListenerThreadCount(4);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);
 }
 
 TEST_F(TestUDPDriver, MultipleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string(1,1024);
+    std::string messageToSend = std::string("1",1024);
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string(((char*)nm.data), nm.size));
+            [messageToSend] (gcm::NetworkMessage nm) {
+                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );
     this->sendMessage(messageToSend, 1000);

@@ -2,35 +2,63 @@
 // Created by enver on 22.05.2021.
 //
 #include<ros/ros.h>
-#include<gcm/drivers/ethernet/UDPDriver.h>
+#include"gcm/CreateUDPComm.h"
+#include"gcm/NetworkMessage.h"
+#include"gcm/drivers/ethernet/UDPDriver.h"
+#include"gcm/drivers/EthernetNetworkDriver.h"
 
-void handleCallback1(NetworkMessage networkMessage){
-    std::cout<<std::string(((char*)networkMessage.data), networkMessage.size) <<std::endl;
+ros::NodeHandlePtr nh;
+typedef struct DriverWithTopic{
+    ros::Subscriber sb;
+    ros::Publisher pb;
+    std::shared_ptr<gcm::NetworkDriver> driver;
+} DriverWithTopic;
+
+std::unordered_map<std::string, DriverWithTopic> drivers;
+
+ros::Subscriber generateSubscriber(const std::string& topicName){
+    return nh->subscribe<gcm::NetworkMessage>(topicName, 10, [topicName] (const gcm::NetworkMessageConstPtr& nm){
+        drivers[topicName].driver->send(*nm);
+    });
 }
 
-void handleCallback2(NetworkMessage networkMessage){
-    std::cout<<"Size:"<<networkMessage.size<<"\n";
-    std::cout<<std::string(((char*)networkMessage.data), networkMessage.size) <<std::endl;
+void prepareSendCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
+                           const gcm::CreateUDPComm::Request& req,
+                           DriverWithTopic& driverWithTopic){
+    ethernetNetworkDriver->setTargetAddress(req.targetAddress,req.targetPort);
+    driverWithTopic.sb = generateSubscriber(req.sendMessageTopicName);
 }
 
-int main(){
-    gcm::UDPDriver listener, sender;
-    listener.setReceiveAddress("127.0.0.1",13333);
-    sender.setTargetAddress("127.0.0.1",13333);
-    listener.listen();
-    listener.addCallback(handleCallback1);
-    listener.addCallback(handleCallback2);
-    listener.setListenerThreadCount(1);
-    NetworkMessage nm;
-    std::string data = "AAA!Helloaskdaşlsdkaşlsdkasldasdasdlaksdşlasdlkalsşdkaşlsdasdasdasdasd!Helloaskdaşlsdkaşlsdkasldasdasdlaksdşlasdlkalsşdkaşlsdasdasdasdasd!";
-    nm.data = (void*)data.data();
-    nm.size = data.size();
+void prepareReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
+                           const gcm::CreateUDPComm::Request& req,
+                           DriverWithTopic& driverWithTopic){
+    ethernetNetworkDriver->setReceiveAddress(req.receiveAddress,req.receivePort);
+    ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
+    driverWithTopic.pb = listenerResultPublisher;
+    ethernetNetworkDriver->setListenerThreadCount(req.receiveThreadCount);
+    ethernetNetworkDriver->addCallback([req] (const gcm::NetworkMessage& nm){
+        drivers[req.sendMessageTopicName].pb.publish(nm);
+    });
+    ethernetNetworkDriver->listen();
+}
 
-    for (int i = 0; i < 10; ++i) {
-        sender.send(nm);
-        std::this_thread::sleep_for(std::chrono::seconds (1));
+bool registerUDPComm(gcm::CreateUDPComm::Request  &req,
+                     gcm::CreateUDPComm::Response &res){
+    DriverWithTopic driverWithTopic;
+    std::shared_ptr<gcm::EthernetNetworkDriver> udpDriver = std::make_shared<gcm::UDPDriver>();
+    prepareSendCapability(udpDriver, req, driverWithTopic);
+    if(req.shouldListen)
+        prepareReceiveCapability(udpDriver, req, driverWithTopic);
+    driverWithTopic.driver = udpDriver;
+    drivers[req.sendMessageTopicName] = driverWithTopic;
+    res.result = true;
+    return true;
+}
 
-    }
-    std::cout<<"HELLOaaO"<<std::endl;
+int main(int argc, char **argv){
+    ros::init(argc, argv, "gcm");
+    nh = boost::make_shared<ros::NodeHandle>();
+    ros::ServiceServer service = nh->advertiseService("registerUDPComm", registerUDPComm);
+    ros::spin();
 }
 

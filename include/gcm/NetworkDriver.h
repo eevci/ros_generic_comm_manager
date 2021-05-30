@@ -10,7 +10,7 @@
 #include <functional>
 #include <algorithm>
 namespace gcm{
-    typedef std::function<void(NetworkMessage)> CallbackFunction;
+    typedef std::function<void(const NetworkMessage&)> CallbackFunction;
     class NetworkDriver{
     public:
         virtual void listen() = 0;
@@ -20,7 +20,7 @@ namespace gcm{
     private:
         std::vector<CallbackFunction> callbackList;
     protected:
-        virtual void notify(const NetworkMessage message) const {
+        virtual void notify(const NetworkMessage& message) const {
             std::for_each(this->callbackList.begin(),this->callbackList.end(),
                           [message] (const CallbackFunction& f) { f(message);});
         };

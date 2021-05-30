@@ -7,13 +7,23 @@ add_compile_options(-std=c++17)
 find_package(Boost REQUIRED)
 find_package(GTest REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
-        roscpp)
+        roscpp
+        std_msgs
+        message_generation)
+
+add_service_files( FILES
+        CreateUDPComm.srv
+)
+
+add_message_files( FILES
+        NetworkMessage.msg
+        )
+generate_messages(DEPENDENCIES
+         std_msgs
+)
 
 catkin_package()
-#[[add_service_files(
-        FILES
-        CreateUDPComm.srv
-)]]
+
 ###########
 ## Build ##
 ###########
@@ -35,11 +45,11 @@ set(SRC_FILES
 ## Declare a C++ library
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES} )
 
-add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp)
 
 
 add_executable(${PROJECT_NAME}_node ${SRC_FILES})
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node

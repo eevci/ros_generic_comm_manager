@@ -5,6 +5,7 @@
 #ifndef ETH_UDPDRIVER_H
 #define ETH_UDPDRIVER_H
 #include "gcm/drivers/EthernetNetworkDriver.h"
+#include "gcm/NetworkMessage.h"
 namespace gcm {
     typedef boost::asio::ip::udp::socket BOOST_UDP_SOCKET;
     typedef boost::asio::ip::udp::endpoint BOOST_UDP_ENDPOINT;
