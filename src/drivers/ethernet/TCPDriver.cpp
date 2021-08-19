@@ -21,21 +21,20 @@ namespace gcm{
         std::cout << "Listening with "<< (int)this->listenerThreadCount <<" threads\n";
     }
 
-    void TCPDriver::handleReceive(const boost::system::error_code& error, size_t bytesTransferred){
-
-    }
     void TCPDriver::doReceive(){
         this->socket->async_receive(boost::asio::buffer(recv_buffer),
                                         boost::bind(&TCPDriver::handleReceive,
-                                            this,boost::asio::placeholders::error,
-                                                boost::asio::placeholders::bytes_transferred));
+                                            this,
+                                            boost::asio::placeholders::error,
+                                            boost::asio::placeholders::bytes_transferred,
+                                            &(*recv_buffer.begin())));
     }
 
     bool TCPDriver::send(NetworkMessage networkMessage){
         boost::system::error_code err;
         BOOST_TCP_ENDPOINT endpoint {this->targetAddress, this->targetPort};
         bool sent = socket->send(boost::asio::buffer(networkMessage.data,networkMessage.data.size()), 0, err);
-        std::this_thread::sleep_for(std::chrono::microseconds (100));
+        std::this_thread::sleep_for(std::chrono::microseconds (1));
         return sent>0;
     }
 }

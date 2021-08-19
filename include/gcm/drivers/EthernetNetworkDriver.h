@@ -12,6 +12,7 @@
 #include <boost/thread.hpp>
 #include <thread>
 #include <iostream>
+#include <string>
 namespace gcm {
     class EthernetNetworkDriver : public gcm::NetworkDriver {
     public:
@@ -35,6 +36,16 @@ namespace gcm {
         unsigned short receivePort;
         unsigned short targetPort;
         uint8_t listenerThreadCount = std::thread::hardware_concurrency(); //Number of cores
+        void handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter){
+            if (error) {
+                std::cout << "Receive failed: " << error.message() << "\n";
+                return;
+            }
+            /*NetworkMessage networkMessage;
+            networkMessage.data.assign(recv_buffer_iter, bytesTransferred);
+            networkMessage.size = bytesTransferred;
+            this->notify(networkMessage);*/
+        }
     };
 }
 

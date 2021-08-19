@@ -9,7 +9,7 @@
 namespace gcm {
     typedef boost::asio::ip::udp::socket BOOST_UDP_SOCKET;
     typedef boost::asio::ip::udp::endpoint BOOST_UDP_ENDPOINT;
-    class UDPDriver : public EthernetNetworkDriver {
+    class UDPDriver : public EthernetNetworkDriver, public std::enable_shared_from_this<UDPDriver> {
     public:
         UDPDriver();
         ~UDPDriver();
@@ -19,7 +19,6 @@ namespace gcm {
     private:
         boost::array<char, 1024> recv_buffer;
         std::unique_ptr<BOOST_UDP_SOCKET> socket;
-        void handleReceive(const boost::system::error_code& error, size_t bytesTransferred);
         void doReceive();
         BOOST_UDP_ENDPOINT senderEndpoint;
         boost::thread_group workerThreads;

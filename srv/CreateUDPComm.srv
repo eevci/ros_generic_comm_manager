@@ -1,0 +1,10 @@
+string targetAddress
+uint8 targetPort
+string sendMessageTopicName
+bool shouldListen
+string receiveAddress
+uint8 receivePort
+string receiveMessageTopicName
+uint8 receiveThreadCount
+---
+bool result

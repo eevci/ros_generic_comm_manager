@@ -33,7 +33,7 @@ TEST_F(TestUDPDriver, singleShortMessageToTwelveThreadListener) {
 }
 
 TEST_F(TestUDPDriver, singleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string("1",1024);
+    std::string messageToSend = std::string(1024,'1');
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
@@ -45,7 +45,7 @@ TEST_F(TestUDPDriver, singleLongMessageToOneThreadListener) {
 }
 
 TEST_F(TestUDPDriver, singleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string("1",1024);
+    std::string messageToSend = std::string(1024,'1');
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
@@ -93,7 +93,7 @@ TEST_F(TestUDPDriver, MultipleShortMessageToTwelveThreadListener) {
 }
 
 TEST_F(TestUDPDriver, MultipleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string("1",1024);
+    std::string messageToSend = std::string(1024,'1');
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
@@ -105,7 +105,7 @@ TEST_F(TestUDPDriver, MultipleLongMessageToOneThreadListener) {
 }
 
 TEST_F(TestUDPDriver, MultipleLongMessageToFourThreadListener) {
-    std::string messageToSend = std::string("1",1024);
+    std::string messageToSend = std::string(1024,'1');
     listenerUDPDriver->setListenerThreadCount(4);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
@@ -117,11 +117,12 @@ TEST_F(TestUDPDriver, MultipleLongMessageToFourThreadListener) {
 }
 
 TEST_F(TestUDPDriver, MultipleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string("1",1024);
+    std::string messageToSend = std::string(1024,'1');
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
             [messageToSend] (gcm::NetworkMessage nm) {
+                std::cout<<"Size:"<<nm.size<<std::endl;
                 EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );

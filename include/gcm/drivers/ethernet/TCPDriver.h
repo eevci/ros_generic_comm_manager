@@ -20,7 +20,6 @@ namespace gcm {
         boost::array<char, 10240> recv_buffer;
         std::unique_ptr<BOOST_TCP_SOCKET> socket;
         BOOST_TCP_ENDPOINT senderEndpoint;
-        void handleReceive(const boost::system::error_code& error, size_t bytesTransferred);
         void doReceive();
         boost::thread_group workerThreads;
     };
