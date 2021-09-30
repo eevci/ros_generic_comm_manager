@@ -37,14 +37,15 @@ namespace gcm {
         unsigned short targetPort;
         uint8_t listenerThreadCount = std::thread::hardware_concurrency(); //Number of cores
         void handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter){
+            std::cout << "bytesTransferred: " << bytesTransferred << "\n";
             if (error) {
                 std::cout << "Receive failed: " << error.message() << "\n";
                 return;
             }
-            /*NetworkMessage networkMessage;
+            NetworkMessage networkMessage;
             networkMessage.data.assign(recv_buffer_iter, bytesTransferred);
             networkMessage.size = bytesTransferred;
-            this->notify(networkMessage);*/
+            this->notify(networkMessage);
         }
     };
 }
