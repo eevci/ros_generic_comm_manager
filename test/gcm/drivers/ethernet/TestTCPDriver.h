@@ -16,8 +16,8 @@ protected:
 
     void SetUp(){
         listenerTCPDriver = std::make_shared<gcm::TCPDriver>();
-        senderTCPDriver = std::make_shared<gcm::TCPDriver>();
         listenerTCPDriver->setReceiveAddress("127.0.0.1", 13333);
+        senderTCPDriver = std::make_shared<gcm::TCPDriver>();
         senderTCPDriver->setTargetAddress("127.0.0.1", 13333);
     }
     void TearDown(){
