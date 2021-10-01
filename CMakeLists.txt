@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_service_files( FILES
         CreateUDPComm.srv
+        CreateTCPComm.srv
 )
 
 add_message_files( FILES

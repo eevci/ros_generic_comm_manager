@@ -11,6 +11,36 @@ namespace gcm {
     typedef BOOST_TCP::socket BOOST_TCP_SOCKET;
     typedef BOOST_TCP::endpoint BOOST_TCP_ENDPOINT;
     typedef BOOST_TCP::acceptor BOOST_TCP_ACCEPTOR;
+    static const int BACKLOG_SIZE = 30;
+
+    class Session : public std::enable_shared_from_this<Session>
+    {
+    public:
+
+        Session(boost::asio::ip::tcp::socket&& socket)
+        : socket(std::move(socket))
+        {
+        }
+        ~Session(){
+            socket.close();
+        }
+        void start()
+        {
+            std::cout<<"started!\n";
+            boost::asio::async_read_until(socket, streambuf, '\n', [self = shared_from_this()] (boost::system::error_code error, std::size_t bytes_transferred)
+            {
+                std::cout << std::istream(&self->streambuf).rdbuf();
+            });
+        }
+
+    private:
+        BOOST_TCP_SOCKET socket;
+        boost::asio::streambuf streambuf;
+    };
+
+
+
+    
     class TCPDriver : public EthernetNetworkDriver {
     public:
         TCPDriver();
@@ -30,7 +60,6 @@ namespace gcm {
         bool isConnected = false;
         void doAccept();
         void doReceive();
-        void handleAccept(BOOST_TCP::socket* client, const boost::system::error_code& error);
         boost::thread_group workerThreads;
     };
 }

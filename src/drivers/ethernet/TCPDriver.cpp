@@ -4,37 +4,60 @@
 #include "gcm/drivers/ethernet/TCPDriver.h"
 namespace gcm{
     TCPDriver::TCPDriver(){
-        this->socket = std::make_shared<BOOST_TCP_SOCKET>(this->ioContext);
-        this->socket->open(BOOST_TCP::v4());
+        
         this->isConnected = false;
     }
     TCPDriver::~TCPDriver(){
-        this->socket->close();
+        this->acceptor->close();
         this->ioContext.stop();
+        this->workerThreads.join_all();
     }
 
-    void TCPDriver::doAccept(){
-        //acceptor->async_accept(*this->socket, [this](boost::system::error_code ec){});
-        this->acceptor->async_accept(*this->socket,
-            [this](boost::system::error_code ec)
-            {
-             if (!ec)
-            {
-                //std::make_shared<session>(std::move(socket_))->start();
-                this->doReceive();
-            }
-
-            this->doAccept(); 
-            }
-        ); 
+    /* void TCPDriver::doAccept(){
+        try {
+            this->acceptor->accept(*this->socket);
+            std::cout<<"Accepted\n";
+        }
+        catch (boost::system::system_error &e) {
+            std::cerr << "Error occured! Error code = " << e.code()
+            << ". Message: " << e.what();
+            return;
+        }
+        
     }
 
-    void TCPDriver::handleAccept(BOOST_TCP::socket* client, const boost::system::error_code& error) {
-
-    }
     void TCPDriver::listen(){
-        this->acceptor = std::make_shared<BOOST_TCP_ACCEPTOR>(this->ioContext, BOOST_TCP_ENDPOINT(BOOST_TCP::v4(), this->receivePort));
-        this->doAccept();
+        this->socket = std::make_shared<BOOST_TCP_SOCKET>(this->ioContext);
+        unsigned short port_num = this->receivePort;
+        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address_v4::any(),port_num);
+        this->acceptor = std::make_shared<BOOST_TCP_ACCEPTOR>(this->ioContext, ep.protocol());
+        acceptor->bind(ep);
+        acceptor->listen(BACKLOG_SIZE);
+        std::thread(&TCPDriver::doAccept,this).detach();       
+    } */
+    
+    void TCPDriver::doAccept(){
+        try {
+            BOOST_TCP_SOCKET _socket = std::make_shared<BOOST_TCP_SOCKET>(this->ioContext);
+            acceptor->async_accept( _socket, boost::bind( &http_server::handle_accept, this, ph::_1 ) );
+
+            std::cout<<"Accepted\n";
+        }
+        catch (boost::system::system_error &e) {
+            std::cerr << "Error occured! Error code = " << e.code()
+            << ". Message: " << e.what();
+            return;
+        }
+        
+    }
+
+    void TCPDriver::listen(){
+        unsigned short port_num = this->receivePort;
+        boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address_v4::any(),port_num);
+        this->acceptor = std::make_shared<BOOST_TCP_ACCEPTOR>(this->ioContext, ep.protocol());
+        acceptor->bind(ep);
+        acceptor->listen(BACKLOG_SIZE);
+        std::thread(&TCPDriver::doAccept,this).detach();       
     }
 
     void TCPDriver::doReceive(){
