@@ -3,128 +3,70 @@
 //
 #include "TestTCPDriver.h"
 
-
-TEST_F(TestTCPDriver, MultipleShortMessageToFourThreadListener) {
-    std::string messageToSend = "HelloWorld!";
-    listenerTCPDriver->setListenerThreadCount(4);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1000);
-}
-TEST_F(TestTCPDriver, emptyEndpointTest) {
-    EXPECT_EQ (listenerTCPDriver->getSenderEndPoint(),  gcm::BOOST_TCP_ENDPOINT());
-}
-
 TEST_F(TestTCPDriver, singleShortMessageToOneThreadListener) {
-    std::string messageToSend = "HelloWorld!";
-    listenerTCPDriver->setListenerThreadCount(1);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1);
+    std::string messageToSend = "HelloWorld!\n\rtest";
+    runTestsWithParams(messageToSend, 1, 1);
 }
 
 TEST_F(TestTCPDriver, singleShortMessageToTwelveThreadListener) {
-    std::string messageToSend = "HelloWorld!";
-    listenerTCPDriver->setListenerThreadCount(12);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1);
+    std::string messageToSend = "HelloWorld!\n\rtest";
+    runTestsWithParams(messageToSend, 1, 12);
 }
 
 TEST_F(TestTCPDriver, singleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string("1",1023);
-    listenerTCPDriver->setListenerThreadCount(1);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1);
+    std::string messageToSend = genRandomString(10000);
+    runTestsWithParams(messageToSend, 1, 1);
 }
 
 TEST_F(TestTCPDriver, singleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string("1",1023);
-    listenerTCPDriver->setListenerThreadCount(12);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1);
+    std::string messageToSend = genRandomString(10000);
+    runTestsWithParams(messageToSend, 1, 12);
 }
 
 TEST_F(TestTCPDriver, MultipleShortMessageToOneThreadListener) {
     std::string messageToSend = "HelloWorld!";
-    listenerTCPDriver->setListenerThreadCount(1);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1000);
+    runTestsWithParams(messageToSend, 100, 1);
 }
 
-
+ TEST_F(TestTCPDriver, MultipleShortMessageToFourThreadListener) {
+    std::string messageToSend = "HelloWorld!";
+    runTestsWithParams(messageToSend, 100, 4);
+}
 
 TEST_F(TestTCPDriver, MultipleShortMessageToTwelveThreadListener) {
     std::string messageToSend = "HelloWorld!";
-    listenerTCPDriver->setListenerThreadCount(12);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1000);
+    runTestsWithParams(messageToSend, 100, 12);
 }
 
 TEST_F(TestTCPDriver, MultipleLongMessageToOneThreadListener) {
-    std::string messageToSend = std::string("1",1023);
-    listenerTCPDriver->setListenerThreadCount(1);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1000);
+    std::string messageToSend = genRandomString(10000);
+    runTestsWithParams(messageToSend, 100, 1);
 }
 
 TEST_F(TestTCPDriver, MultipleLongMessageToFourThreadListener) {
-    std::string messageToSend = std::string("1",1023);
-    listenerTCPDriver->setListenerThreadCount(4);
-    listenerTCPDriver->listen();
-    listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
-                ;}
-    );
-    this->sendMessage(messageToSend, 1000);
+    std::string messageToSend = genRandomString(10000);
+    runTestsWithParams(messageToSend, 100, 4);
 }
 
 TEST_F(TestTCPDriver, MultipleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = std::string("1",1023);
-    listenerTCPDriver->setListenerThreadCount(12);
+    std::string messageToSend = genRandomString(10000);
+    runTestsWithParams(messageToSend, 100, 12);
+}
+
+void TestTCPDriver::runTestsWithParams(const std::string& messageToSend, const int& numberOfSent, const int& numberOfThread){
+    std::stringstream truthStream;
+    std::stringstream responseStream;
+    for(int i = 0; i<numberOfSent; i++){
+        truthStream<<messageToSend;
+    }
+    listenerTCPDriver->setListenerThreadCount(numberOfThread);
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
-                EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
+            [&] (gcm::NetworkMessage nm) {
+                responseStream<<std::string((char*)nm.data.data(), nm.size);
                 ;}
     );
-    this->sendMessage(messageToSend, 1000);
+    this->sendMessage(messageToSend, numberOfSent);
+    std::this_thread::sleep_for(std::chrono::milliseconds (100));
+    EXPECT_EQ(truthStream.str(),  responseStream.str());
 }

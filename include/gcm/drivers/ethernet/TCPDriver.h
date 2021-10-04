@@ -13,7 +13,7 @@ namespace gcm {
     typedef BOOST_TCP::acceptor BOOST_TCP_ACCEPTOR;
     static const int BACKLOG_SIZE = 30;
     
-    class TCPDriver : public std::enable_shared_from_this<TCPDriver>, public EthernetNetworkDriver {
+    class TCPDriver : public EthernetNetworkDriver {
     public:
         TCPDriver();
         ~TCPDriver();
@@ -23,13 +23,11 @@ namespace gcm {
             this->targetAddress = boost::asio::ip::address::from_string(ipAddress);
             this->targetPort = port;
         }
-        BOOST_TCP_ENDPOINT getSenderEndPoint(){return this->senderEndpoint;}
     private:
         boost::array<char, 10240> recv_buffer;
         std::shared_ptr<BOOST_TCP_SOCKET> socket;
         std::vector<std::shared_ptr<BOOST_TCP_SOCKET>> clientSocketList;
         std::shared_ptr<BOOST_TCP_ACCEPTOR> acceptor;
-        BOOST_TCP_ENDPOINT senderEndpoint;
         bool isConnected = false;
         void doAccept();
         void doReceive(std::shared_ptr<BOOST_TCP_SOCKET> _socket);

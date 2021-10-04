@@ -8,13 +8,11 @@ namespace gcm{
         this->socket = std::make_shared<BOOST_TCP_SOCKET>(this->ioContext);
     }
     TCPDriver::~TCPDriver(){
-        if(this->acceptor->is_open())
-            this->acceptor->close();
         if(!this->ioContext.stopped())
             this->ioContext.stop();
-        for(auto socketPtr : clientSocketList)
-            socketPtr->close();
-        this->workerThreads.join_all();
+        if(this->workerThreads.size())
+            this->workerThreads.join_all(); 
+            
     }
 
     void TCPDriver::handleAccept(std::shared_ptr<BOOST_TCP_SOCKET> socket , boost::system::error_code const & err ){
@@ -27,7 +25,7 @@ namespace gcm{
         clientSocketList.push_back(_socket);
         try {
             _socket = std::make_shared<BOOST_TCP_SOCKET>(this->ioContext);
-            acceptor->async_accept( *_socket, boost::bind( &TCPDriver::handleAccept, shared_from_this(), _socket, boost::asio::placeholders::error) );
+            acceptor->async_accept( *_socket, boost::bind( &TCPDriver::handleAccept, this, _socket, boost::asio::placeholders::error) );
         }
         catch (boost::system::system_error &e) {
             std::cerr << "Error occured! Error code = " << e.code()
@@ -43,10 +41,11 @@ namespace gcm{
         this->acceptor = std::make_shared<BOOST_TCP_ACCEPTOR>(this->ioContext, ep.protocol());
         acceptor->bind(ep);
         acceptor->listen(BACKLOG_SIZE);
-        std::cout << "Listening with "<< (int)this->listenerThreadCount <<" threads\n";
         this->doAccept();   
         for(int x = 0; x < this->listenerThreadCount; ++x)
             this->workerThreads.create_thread(boost::bind(&boost::asio::io_context::run, &ioContext));    
+        std::cout << "Listening with "<< (int)this->listenerThreadCount <<" threads\n";
+            
     }
 
     void TCPDriver::handleReceive(std::shared_ptr<BOOST_TCP_SOCKET> socket, const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter){
@@ -62,7 +61,7 @@ namespace gcm{
     void TCPDriver::doReceive(std::shared_ptr<BOOST_TCP_SOCKET> socket){
         socket->async_receive(boost::asio::buffer(recv_buffer),
                                         boost::bind(&TCPDriver::handleReceive,
-                                            shared_from_this(),
+                                            this,
                                             socket,
                                             boost::asio::placeholders::error,
                                             boost::asio::placeholders::bytes_transferred,
