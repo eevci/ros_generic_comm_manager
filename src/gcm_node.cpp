@@ -40,7 +40,7 @@ void prepareTCPSendCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ether
 void prepareUDPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
                            const gcm::CreateUDPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
-    ethernetNetworkDriver->setReceiveAddress(req.receiveAddress,req.receivePort);
+    ethernetNetworkDriver->setReceiveAddress("127.0.0.1",req.receivePort);
     ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
     driverWithTopic.pb = listenerResultPublisher;
     ethernetNetworkDriver->setListenerThreadCount(req.receiveThreadCount);
@@ -53,7 +53,7 @@ void prepareUDPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& et
 void prepareTCPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
                            const gcm::CreateTCPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
-    ethernetNetworkDriver->setReceiveAddress(req.receiveAddress,req.receivePort);
+    ethernetNetworkDriver->setReceiveAddress("127.0.0.1",req.receivePort);
     ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
     driverWithTopic.pb = listenerResultPublisher;
     ethernetNetworkDriver->setListenerThreadCount(req.receiveThreadCount);

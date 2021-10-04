@@ -30,7 +30,6 @@ protected:
         for(int i = 0; i<count; i++){
             gcm::NetworkMessage nm;
             nm.data.assign(messageToSend.begin(), messageToSend.end());
-            nm.size = messageToSend.size();
             senderUDPDriver->send(nm);
         }
     }

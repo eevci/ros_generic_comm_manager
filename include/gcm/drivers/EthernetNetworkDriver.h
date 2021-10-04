@@ -43,7 +43,6 @@ namespace gcm {
             else {
                 NetworkMessage networkMessage;
                 networkMessage.data.assign(recv_buffer_iter, bytesTransferred);
-                networkMessage.size = bytesTransferred;
                 this->notify(networkMessage);
             }
         }

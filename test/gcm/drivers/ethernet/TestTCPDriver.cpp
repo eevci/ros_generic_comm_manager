@@ -63,7 +63,7 @@ void TestTCPDriver::runTestsWithParams(const std::string& messageToSend, const i
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
             [&] (gcm::NetworkMessage nm) {
-                responseStream<<std::string((char*)nm.data.data(), nm.size);
+                responseStream<<nm.data;
                 ;}
     );
     this->sendMessage(messageToSend, numberOfSent);
