@@ -10,7 +10,6 @@ TEST_F(TestTCPDriver, MultipleShortMessageToFourThreadListener) {
     listenerTCPDriver->listen();
     listenerTCPDriver->addCallback(
             [messageToSend] (gcm::NetworkMessage nm) {
-                std::cout<<"Hop\n";
                 EXPECT_EQ(messageToSend,  std::string((char*)nm.data.data(), nm.size));
                 ;}
     );

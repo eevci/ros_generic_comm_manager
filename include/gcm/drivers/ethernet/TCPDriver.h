@@ -12,36 +12,8 @@ namespace gcm {
     typedef BOOST_TCP::endpoint BOOST_TCP_ENDPOINT;
     typedef BOOST_TCP::acceptor BOOST_TCP_ACCEPTOR;
     static const int BACKLOG_SIZE = 30;
-
-    class Session : public std::enable_shared_from_this<Session>
-    {
-    public:
-
-        Session(boost::asio::ip::tcp::socket&& socket)
-        : socket(std::move(socket))
-        {
-        }
-        ~Session(){
-            socket.close();
-        }
-        void start()
-        {
-            std::cout<<"started!\n";
-            boost::asio::async_read_until(socket, streambuf, '\n', [self = shared_from_this()] (boost::system::error_code error, std::size_t bytes_transferred)
-            {
-                std::cout << std::istream(&self->streambuf).rdbuf();
-            });
-        }
-
-    private:
-        BOOST_TCP_SOCKET socket;
-        boost::asio::streambuf streambuf;
-    };
-
-
-
     
-    class TCPDriver : public EthernetNetworkDriver {
+    class TCPDriver : public std::enable_shared_from_this<TCPDriver>, public EthernetNetworkDriver {
     public:
         TCPDriver();
         ~TCPDriver();
@@ -55,12 +27,15 @@ namespace gcm {
     private:
         boost::array<char, 10240> recv_buffer;
         std::shared_ptr<BOOST_TCP_SOCKET> socket;
+        std::vector<std::shared_ptr<BOOST_TCP_SOCKET>> clientSocketList;
         std::shared_ptr<BOOST_TCP_ACCEPTOR> acceptor;
         BOOST_TCP_ENDPOINT senderEndpoint;
         bool isConnected = false;
         void doAccept();
-        void doReceive();
+        void doReceive(std::shared_ptr<BOOST_TCP_SOCKET> _socket);
         boost::thread_group workerThreads;
+        void handleAccept(std::shared_ptr<BOOST_TCP_SOCKET> socket , boost::system::error_code const & err );
+        void handleReceive(std::shared_ptr<BOOST_TCP_SOCKET> socket, const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter);
     };
 }
 #endif //ETH_TCPDRIVER_H
