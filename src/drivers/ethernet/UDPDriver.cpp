@@ -24,6 +24,12 @@ namespace gcm{
         std::cout << "Listening with "<< (int)this->listenerThreadCount <<" threads\n";
     }
 
+    void UDPDriver::handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter){
+        EthernetNetworkDriver::handleReceive(error, bytesTransferred, recv_buffer_iter);
+        if(!error)
+            this->doReceive();
+    }
+
     void UDPDriver::doReceive() {
         this->socket->async_receive_from(boost::asio::buffer(recv_buffer),
                                 this->senderEndpoint,

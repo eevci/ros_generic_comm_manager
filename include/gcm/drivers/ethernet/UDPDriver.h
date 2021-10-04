@@ -20,6 +20,7 @@ namespace gcm {
         boost::array<char, 1024> recv_buffer;
         std::unique_ptr<BOOST_UDP_SOCKET> socket;
         void doReceive();
+        void handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter);
         BOOST_UDP_ENDPOINT senderEndpoint;
         boost::thread_group workerThreads;
     };
