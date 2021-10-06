@@ -25,7 +25,7 @@ protected:
         bool isListenerOpened = listenerRS232Driver->open();
         bool isSenderOpened = senderRS232Driver->open();
         if(!isListenerOpened || ! isSenderOpened)
-            ::testing::Test::TearDown();
+            GTEST_SKIP();
     }
     void TearDown(){
         listenerRS232Driver.reset();
