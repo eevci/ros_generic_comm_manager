@@ -22,7 +22,6 @@ namespace gcm {
         void doReceive();
         void handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter);
         BOOST_UDP_ENDPOINT senderEndpoint;
-        boost::thread_group workerThreads;
     };
 
 }

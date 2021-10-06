@@ -67,6 +67,7 @@ if (CATKIN_ENABLE_TESTING)
          test/main.cpp
          test/gcm/drivers/ethernet/TestUDPDriver.cpp
          test/gcm/drivers/ethernet/TestTCPDriver.cpp
+         test/gcm/drivers/ethernet/TestRS232Driver.cpp
          )
  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()

@@ -25,7 +25,7 @@ namespace gcm{
     }
 
     void UDPDriver::handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter){
-        EthernetNetworkDriver::handleReceive(error, bytesTransferred, recv_buffer_iter);
+        NetworkDriver::handleReceive(error, bytesTransferred, recv_buffer_iter);
         if(!error)
             this->doReceive();
     }

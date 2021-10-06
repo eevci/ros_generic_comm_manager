@@ -9,9 +9,17 @@
 namespace gcm{
     class RS232Driver : public SerialNetworkDriver{
     public:
+        RS232Driver();
+        ~RS232Driver();
+        bool open();
         virtual void listen();
-        virtual void addCallback(CallbackFunction callback);
-        virtual bool send();
+        virtual bool send(NetworkMessage);
+    protected:
+        boost::array<char, 1024> recv_buffer;
+        void doReceive();
+        void handleReceive(const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter);
+        boost::asio::io_context ioContext;
+    
     };
 }
 

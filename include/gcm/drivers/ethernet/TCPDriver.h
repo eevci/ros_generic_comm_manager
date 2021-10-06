@@ -31,7 +31,7 @@ namespace gcm {
         bool isConnected = false;
         void doAccept();
         void doReceive(std::shared_ptr<BOOST_TCP_SOCKET> _socket);
-        boost::thread_group workerThreads;
+        
         void handleAccept(std::shared_ptr<BOOST_TCP_SOCKET> socket , boost::system::error_code const & err );
         void handleReceive(std::shared_ptr<BOOST_TCP_SOCKET> socket, const boost::system::error_code& error, size_t bytesTransferred, char* recv_buffer_iter);
     };
