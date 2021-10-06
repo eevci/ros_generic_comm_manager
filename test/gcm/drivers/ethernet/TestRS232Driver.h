@@ -18,13 +18,13 @@ protected:
         listenerRS232Driver = std::make_shared<gcm::RS232Driver>();
         senderRS232Driver = std::make_shared<gcm::RS232Driver>();
         listenerRS232Driver->setBaudrate(9600);
-        listenerRS232Driver->setDevice("/dev/pts/6");
-        listenerRS232Driver->setListenerThreadCount(2);
+        listenerRS232Driver->setDevice("/dev/pts/4");
+        listenerRS232Driver->setListenerThreadCount(1);
         senderRS232Driver->setBaudrate(9600);
-        senderRS232Driver->setDevice("/dev/pts/7");
+        senderRS232Driver->setDevice("/dev/pts/5");
         bool isListenerOpened = listenerRS232Driver->open();
         bool isSenderOpened = senderRS232Driver->open();
-        if(!isListenerOpened || ! isSenderOpened)
+        if(!isListenerOpened || !isSenderOpened)
             GTEST_SKIP();
     }
     void TearDown(){

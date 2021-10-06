@@ -39,17 +39,17 @@ TEST_F(TestRS232Driver, MultipleShortMessageToTwelveThreadListener) {
 }
 
 TEST_F(TestRS232Driver, MultipleLongMessageToOneThreadListener) {
-    std::string messageToSend = genRandomString(10000);
+    std::string messageToSend = genRandomString(100);
     runTestsWithParams(messageToSend, 100, 1);
 }
 
 TEST_F(TestRS232Driver, MultipleLongMessageToFourThreadListener) {
-    std::string messageToSend = genRandomString(10000);
+    std::string messageToSend = genRandomString(100);
     runTestsWithParams(messageToSend, 100, 4);
 }
 
 TEST_F(TestRS232Driver, MultipleLongMessageToTwelveThreadListener) {
-    std::string messageToSend = genRandomString(10000);
+    std::string messageToSend = genRandomString(100);
     runTestsWithParams(messageToSend, 100, 12);
 }
 
