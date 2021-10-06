@@ -4,9 +4,11 @@
 #include<ros/ros.h>
 #include"gcm/CreateUDPComm.h"
 #include"gcm/CreateTCPComm.h"
+#include"gcm/CreateRS232Comm.h"
 #include"gcm/NetworkMessage.h"
 #include"gcm/drivers/ethernet/UDPDriver.h"
 #include"gcm/drivers/ethernet/TCPDriver.h"
+#include"gcm/drivers/serial/RS232Driver.h"
 
 ros::NodeHandlePtr nh;
 typedef struct DriverWithTopic{
@@ -37,6 +39,12 @@ void prepareTCPSendCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ether
     driverWithTopic.sb = generateSubscriber(req.sendMessageTopicName);
 }
 
+void prepareRS232SendCapability(std::shared_ptr<gcm::RS232Driver>& rs232Driver,
+                           const gcm::CreateRS232Comm::Request& req,
+                           DriverWithTopic& driverWithTopic){
+    driverWithTopic.sb = generateSubscriber(req.sendMessageTopicName);
+}
+
 void prepareUDPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
                            const gcm::CreateUDPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
@@ -47,20 +55,39 @@ void prepareUDPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& et
     ethernetNetworkDriver->addCallback([req] (const gcm::NetworkMessage& nm){
         drivers[req.sendMessageTopicName].pb.publish(nm);
     });
+    ethernetNetworkDriver->open();
     ethernetNetworkDriver->listen();
 }
 
-void prepareTCPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
+void prepareTCPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& tcpDriver,
                            const gcm::CreateTCPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
-    ethernetNetworkDriver->setReceiveAddress("127.0.0.1",req.receivePort);
+    tcpDriver->setReceiveAddress("127.0.0.1",req.receivePort);
     ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
     driverWithTopic.pb = listenerResultPublisher;
-    ethernetNetworkDriver->setListenerThreadCount(req.receiveThreadCount);
-    ethernetNetworkDriver->addCallback([req] (const gcm::NetworkMessage& nm){
+    tcpDriver->setListenerThreadCount(req.receiveThreadCount);
+    tcpDriver->addCallback([req] (const gcm::NetworkMessage& nm){
         drivers[req.sendMessageTopicName].pb.publish(nm);
     });
-    ethernetNetworkDriver->listen();
+    tcpDriver->open();
+    tcpDriver->listen();
+}
+
+void prepareRS232ReceiveCapability(std::shared_ptr<gcm::RS232Driver>& rs232Driver,
+                           const gcm::CreateRS232Comm::Request& req,
+                           DriverWithTopic& driverWithTopic){
+
+    rs232Driver->setBaudrate(req.baudrate);
+    rs232Driver->setDevice(req.device);
+    rs232Driver->setListenerThreadCount(req.receiveThreadCount);
+
+    ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
+    driverWithTopic.pb = listenerResultPublisher;
+    rs232Driver->addCallback([req] (const gcm::NetworkMessage& nm){
+        drivers[req.sendMessageTopicName].pb.publish(nm);
+    });
+    rs232Driver->open();
+    rs232Driver->listen();
 }
 
 bool registerUDPComm(gcm::CreateUDPComm::Request  &req,
@@ -84,6 +111,18 @@ bool registerTCPComm(gcm::CreateTCPComm::Request  &req,
     if(req.shouldListen)
         prepareTCPReceiveCapability(tcpDriver, req, driverWithTopic);
     driverWithTopic.driver = tcpDriver;
+    drivers[req.sendMessageTopicName] = driverWithTopic;
+    res.result = true;
+    return true;
+}
+
+bool registerRS232Comm(gcm::CreateRS232Comm::Request  &req,
+                     gcm::CreateRS232Comm::Response &res){
+    DriverWithTopic driverWithTopic;
+    std::shared_ptr<gcm::RS232Driver> rs232Driver = std::make_shared<gcm::RS232Driver>();
+    prepareRS232ReceiveCapability(rs232Driver, req, driverWithTopic);
+    prepareRS232SendCapability(rs232Driver, req, driverWithTopic);
+    driverWithTopic.driver = rs232Driver;
     drivers[req.sendMessageTopicName] = driverWithTopic;
     res.result = true;
     return true;

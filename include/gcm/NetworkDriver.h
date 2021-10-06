@@ -20,6 +20,7 @@ namespace gcm{
     typedef std::function<void(const NetworkMessage&)> CallbackFunction;
     class NetworkDriver{
     public:
+        virtual bool open() = 0;
         virtual void listen() = 0;
         virtual void addCallback(CallbackFunction f) {this->callbackList.push_back(f);};
         virtual bool send(NetworkMessage) = 0;

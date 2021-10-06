@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files( FILES
         CreateUDPComm.srv
         CreateTCPComm.srv
+        CreateRS232Comm.srv
 )
 
 add_message_files( FILES

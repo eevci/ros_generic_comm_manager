@@ -19,7 +19,7 @@ namespace gcm {
         }
         std::pair<std::string, int> getReceiveAddress(){return {this->receiveAddress.to_string(), this->receivePort};}
         std::pair<std::string, int> getTargetAddress(){return {this->targetAddress.to_string(), this->targetPort};}
-        
+        bool open() {return true;};
     protected:
         boost::asio::io_context ioContext;
         boost::asio::ip::address targetAddress;
