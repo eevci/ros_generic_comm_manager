@@ -12,6 +12,7 @@ GCM is implemented with heavily used optimized async boost functions.
 ## 2) Dependencies
 * roscpp
 * std_msgs 
+* gcm_msgs 
 * message_generation 
 
 packages are used in this project.
