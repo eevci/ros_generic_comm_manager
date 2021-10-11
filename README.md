@@ -6,6 +6,7 @@ For now you can communicate with protocols below;
 
 * UDP
 * TCP
+* RS232
 
 GCM is implemented with heavily used optimized async boost functions.   
 
