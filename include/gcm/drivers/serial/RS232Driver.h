@@ -13,7 +13,7 @@ namespace gcm{
         ~RS232Driver();
         bool open();
         virtual void listen();
-        virtual bool send(NetworkMessage);
+        virtual bool send(gcm_msgs::NetworkMessage);
     protected:
         boost::array<char, 1024> recv_buffer;
         void doReceive();

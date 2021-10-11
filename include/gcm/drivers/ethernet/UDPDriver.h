@@ -5,7 +5,7 @@
 #ifndef ETH_UDPDRIVER_H
 #define ETH_UDPDRIVER_H
 #include "gcm/drivers/EthernetNetworkDriver.h"
-#include "gcm/NetworkMessage.h"
+#include "gcm_msgs/NetworkMessage.h"
 namespace gcm {
     typedef boost::asio::ip::udp::socket BOOST_UDP_SOCKET;
     typedef boost::asio::ip::udp::endpoint BOOST_UDP_ENDPOINT;
@@ -14,7 +14,7 @@ namespace gcm {
         UDPDriver();
         ~UDPDriver();
         virtual void listen();
-        virtual bool send(NetworkMessage);
+        virtual bool send(gcm_msgs::NetworkMessage);
         BOOST_UDP_ENDPOINT getSenderEndPoint(){return this->senderEndpoint;}
     private:
         boost::array<char, 1024> recv_buffer;

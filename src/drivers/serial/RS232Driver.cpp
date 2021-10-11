@@ -64,7 +64,7 @@ namespace gcm{
         std::cout << "Listening with "<< (int)this->listenerThreadCount <<" threads\n";
     }
 
-    bool RS232Driver::send(NetworkMessage nm){
+    bool RS232Driver::send(gcm_msgs::NetworkMessage nm){
         boost::system::error_code err;
         bool sent = this->serialPort->write_some(boost::asio::buffer(nm.data,nm.data.size()));
         std::this_thread::sleep_for(std::chrono::microseconds (1));

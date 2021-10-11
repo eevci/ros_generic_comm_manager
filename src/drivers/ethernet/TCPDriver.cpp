@@ -68,7 +68,7 @@ namespace gcm{
                                             &(*recv_buffer.begin())));
     }
 
-    bool TCPDriver::send(NetworkMessage networkMessage){
+    bool TCPDriver::send(gcm_msgs::NetworkMessage networkMessage){
         BOOST_TCP_ENDPOINT endpoint {this->targetAddress, this->targetPort};
         if(!this->isConnected){
             this->isConnected = true;

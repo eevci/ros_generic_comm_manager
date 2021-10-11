@@ -28,7 +28,7 @@ protected:
 
     void sendMessage(const std::string& messageToSend, int count){
         for(int i = 0; i<count; i++){
-            gcm::NetworkMessage nm;
+            gcm_msgs::NetworkMessage nm;
             nm.data.assign(messageToSend.begin(), messageToSend.end());
             senderTCPDriver->send(nm);
         }

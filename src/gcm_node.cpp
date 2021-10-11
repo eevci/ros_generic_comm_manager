@@ -2,13 +2,14 @@
 // Created by enver on 22.05.2021.
 //
 #include<ros/ros.h>
-#include"gcm/CreateUDPComm.h"
-#include"gcm/CreateTCPComm.h"
-#include"gcm/CreateRS232Comm.h"
-#include"gcm/NetworkMessage.h"
-#include"gcm/drivers/ethernet/UDPDriver.h"
-#include"gcm/drivers/ethernet/TCPDriver.h"
-#include"gcm/drivers/serial/RS232Driver.h"
+#include "gcm_msgs/CreateUDPComm.h"
+#include "gcm_msgs/CreateTCPComm.h"
+#include "gcm_msgs/CreateRS232Comm.h"
+#include "gcm_msgs/NetworkMessage.h"
+#include "gcm/drivers/ethernet/UDPDriver.h"
+#include "gcm/drivers/ethernet/TCPDriver.h"
+#include "gcm/drivers/serial/RS232Driver.h"
+#include <unordered_map>
 
 ros::NodeHandlePtr nh;
 typedef struct DriverWithTopic{
@@ -20,39 +21,38 @@ typedef struct DriverWithTopic{
 std::unordered_map<std::string, DriverWithTopic> drivers;
 
 ros::Subscriber generateSubscriber(const std::string& topicName){
-    return nh->subscribe<gcm::NetworkMessage>(topicName, 10, [topicName] (const gcm::NetworkMessageConstPtr& nm){
+    return nh->subscribe<gcm_msgs::NetworkMessage>(topicName, 10, [topicName] (const gcm_msgs::NetworkMessageConstPtr& nm){
         drivers[topicName].driver->send(*nm);
     });
 }
 
 void prepareUDPSendCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
-                           const gcm::CreateUDPComm::Request& req,
+                           const gcm_msgs::CreateUDPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
     ethernetNetworkDriver->setTargetAddress(req.targetAddress,req.targetPort);
     driverWithTopic.sb = generateSubscriber(req.sendMessageTopicName);
 }
 
 void prepareTCPSendCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
-                           const gcm::CreateTCPComm::Request& req,
+                           const gcm_msgs::CreateTCPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
     ethernetNetworkDriver->setTargetAddress(req.targetAddress,req.targetPort);
     driverWithTopic.sb = generateSubscriber(req.sendMessageTopicName);
 }
 
 void prepareRS232SendCapability(std::shared_ptr<gcm::RS232Driver>& rs232Driver,
-                           const gcm::CreateRS232Comm::Request& req,
-                           DriverWithTopic& driverWithTopic){
-    driverWithTopic.sb = generateSubscriber(req.sendMessageTopicName);
+                           const gcm_msgs::CreateRS232Comm::Request& req){
+    drivers[req.sendMessageTopicName].sb = generateSubscriber(req.sendMessageTopicName);
 }
 
 void prepareUDPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& ethernetNetworkDriver,
-                           const gcm::CreateUDPComm::Request& req,
+                           const gcm_msgs::CreateUDPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
     ethernetNetworkDriver->setReceiveAddress("127.0.0.1",req.receivePort);
-    ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
+    ros::Publisher listenerResultPublisher = nh->advertise<gcm_msgs::NetworkMessage>(req.receiveMessageTopicName, 1000);
     driverWithTopic.pb = listenerResultPublisher;
     ethernetNetworkDriver->setListenerThreadCount(req.receiveThreadCount);
-    ethernetNetworkDriver->addCallback([req] (const gcm::NetworkMessage& nm){
+    ethernetNetworkDriver->addCallback([req] (const gcm_msgs::NetworkMessage& nm){
         drivers[req.sendMessageTopicName].pb.publish(nm);
     });
     ethernetNetworkDriver->open();
@@ -60,13 +60,13 @@ void prepareUDPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& et
 }
 
 void prepareTCPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& tcpDriver,
-                           const gcm::CreateTCPComm::Request& req,
+                           const gcm_msgs::CreateTCPComm::Request& req,
                            DriverWithTopic& driverWithTopic){
     tcpDriver->setReceiveAddress("127.0.0.1",req.receivePort);
-    ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
+    ros::Publisher listenerResultPublisher = nh->advertise<gcm_msgs::NetworkMessage>(req.receiveMessageTopicName, 1000);
     driverWithTopic.pb = listenerResultPublisher;
     tcpDriver->setListenerThreadCount(req.receiveThreadCount);
-    tcpDriver->addCallback([req] (const gcm::NetworkMessage& nm){
+    tcpDriver->addCallback([req] (const gcm_msgs::NetworkMessage& nm){
         drivers[req.sendMessageTopicName].pb.publish(nm);
     });
     tcpDriver->open();
@@ -74,24 +74,23 @@ void prepareTCPReceiveCapability(std::shared_ptr<gcm::EthernetNetworkDriver>& tc
 }
 
 void prepareRS232ReceiveCapability(std::shared_ptr<gcm::RS232Driver>& rs232Driver,
-                           const gcm::CreateRS232Comm::Request& req,
-                           DriverWithTopic& driverWithTopic){
+                           const gcm_msgs::CreateRS232Comm::Request& req){
 
     rs232Driver->setBaudrate(req.baudrate);
     rs232Driver->setDevice(req.device);
     rs232Driver->setListenerThreadCount(req.receiveThreadCount);
 
-    ros::Publisher listenerResultPublisher = nh->advertise<gcm::NetworkMessage>(req.receiveMessageTopicName, 1000);
-    driverWithTopic.pb = listenerResultPublisher;
-    rs232Driver->addCallback([req] (const gcm::NetworkMessage& nm){
+    ros::Publisher listenerResultPublisher = nh->advertise<gcm_msgs::NetworkMessage>(req.receiveMessageTopicName, 1000);
+    drivers[req.sendMessageTopicName].pb = listenerResultPublisher;
+    rs232Driver->addCallback([req] (const gcm_msgs::NetworkMessage& nm){
         drivers[req.sendMessageTopicName].pb.publish(nm);
     });
     rs232Driver->open();
     rs232Driver->listen();
 }
 
-bool registerUDPComm(gcm::CreateUDPComm::Request  &req,
-                     gcm::CreateUDPComm::Response &res){
+bool registerUDPComm(gcm_msgs::CreateUDPComm::Request  &req,
+                     gcm_msgs::CreateUDPComm::Response &res){
     DriverWithTopic driverWithTopic;
     std::shared_ptr<gcm::EthernetNetworkDriver> udpDriver = std::make_shared<gcm::UDPDriver>();
     prepareUDPSendCapability(udpDriver, req, driverWithTopic);
@@ -103,8 +102,8 @@ bool registerUDPComm(gcm::CreateUDPComm::Request  &req,
     return true;
 }
 
-bool registerTCPComm(gcm::CreateTCPComm::Request  &req,
-                     gcm::CreateTCPComm::Response &res){
+bool registerTCPComm(gcm_msgs::CreateTCPComm::Request  &req,
+                     gcm_msgs::CreateTCPComm::Response &res){
     DriverWithTopic driverWithTopic;
     std::shared_ptr<gcm::EthernetNetworkDriver> tcpDriver = std::make_shared<gcm::TCPDriver>();
     prepareTCPSendCapability(tcpDriver, req, driverWithTopic);
@@ -116,14 +115,14 @@ bool registerTCPComm(gcm::CreateTCPComm::Request  &req,
     return true;
 }
 
-bool registerRS232Comm(gcm::CreateRS232Comm::Request  &req,
-                     gcm::CreateRS232Comm::Response &res){
+bool registerRS232Comm(gcm_msgs::CreateRS232Comm::Request  &req,
+                     gcm_msgs::CreateRS232Comm::Response &res){
     DriverWithTopic driverWithTopic;
     std::shared_ptr<gcm::RS232Driver> rs232Driver = std::make_shared<gcm::RS232Driver>();
-    prepareRS232ReceiveCapability(rs232Driver, req, driverWithTopic);
-    prepareRS232SendCapability(rs232Driver, req, driverWithTopic);
     driverWithTopic.driver = rs232Driver;
     drivers[req.sendMessageTopicName] = driverWithTopic;
+    prepareRS232ReceiveCapability(rs232Driver, req);
+    prepareRS232SendCapability(rs232Driver, req);
     res.result = true;
     return true;
 }
@@ -133,6 +132,7 @@ int main(int argc, char **argv){
     nh = boost::make_shared<ros::NodeHandle>();
     ros::ServiceServer service_udp = nh->advertiseService("registerUDPComm", registerUDPComm);
     ros::ServiceServer service_tcp = nh->advertiseService("registerTCPComm", registerTCPComm);
+    ros::ServiceServer service_rs232 = nh->advertiseService("registerRS232Comm", registerRS232Comm);
     ros::spin();
 }
 

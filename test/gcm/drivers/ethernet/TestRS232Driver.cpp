@@ -62,7 +62,7 @@ void TestRS232Driver::runTestsWithParams(const std::string& messageToSend, const
     listenerRS232Driver->setListenerThreadCount(numberOfThread);
     listenerRS232Driver->listen();
     listenerRS232Driver->addCallback(
-            [&] (gcm::NetworkMessage nm) {
+            [&] (gcm_msgs::NetworkMessage nm) {
                 responseStream<<nm.data;
                 ;}
     );

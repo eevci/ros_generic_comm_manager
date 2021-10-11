@@ -40,7 +40,7 @@ namespace gcm{
                                 &(*recv_buffer.begin())));
     }
 
-    bool UDPDriver::send(NetworkMessage networkMessage) {
+    bool UDPDriver::send(gcm_msgs::NetworkMessage networkMessage) {
         boost::system::error_code err;
         BOOST_UDP_ENDPOINT endpoint {this->targetAddress, this->targetPort};
         bool sent = socket->send_to(boost::asio::buffer(networkMessage.data,networkMessage.data.size()), endpoint, 0, err);

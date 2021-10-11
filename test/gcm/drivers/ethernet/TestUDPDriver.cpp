@@ -13,7 +13,7 @@ TEST_F(TestUDPDriver, singleShortMessageToOneThreadListener) {
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -25,7 +25,7 @@ TEST_F(TestUDPDriver, singleShortMessageToTwelveThreadListener) {
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -37,7 +37,7 @@ TEST_F(TestUDPDriver, singleLongMessageToOneThreadListener) {
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -49,7 +49,7 @@ TEST_F(TestUDPDriver, singleLongMessageToTwelveThreadListener) {
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -61,7 +61,7 @@ TEST_F(TestUDPDriver, MultipleShortMessageToOneThreadListener) {
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -73,7 +73,7 @@ TEST_F(TestUDPDriver, MultipleShortMessageToFourThreadListener) {
     listenerUDPDriver->setListenerThreadCount(4);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -85,7 +85,7 @@ TEST_F(TestUDPDriver, MultipleShortMessageToTwelveThreadListener) {
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -97,7 +97,7 @@ TEST_F(TestUDPDriver, MultipleLongMessageToOneThreadListener) {
     listenerUDPDriver->setListenerThreadCount(1);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );
@@ -109,7 +109,7 @@ TEST_F(TestUDPDriver, MultipleLongMessageToFourThreadListener) {
     listenerUDPDriver->setListenerThreadCount(4);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
 
                 ;}
@@ -122,7 +122,7 @@ TEST_F(TestUDPDriver, MultipleLongMessageToTwelveThreadListener) {
     listenerUDPDriver->setListenerThreadCount(12);
     listenerUDPDriver->listen();
     listenerUDPDriver->addCallback(
-            [messageToSend] (gcm::NetworkMessage nm) {
+            [messageToSend] (gcm_msgs::NetworkMessage nm) {
                 EXPECT_EQ(messageToSend, nm.data);
                 ;}
     );

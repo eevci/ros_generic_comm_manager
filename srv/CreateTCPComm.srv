@@ -1,9 +1,0 @@
-string targetAddress
-uint16 targetPort
-bool shouldListen
-uint8 receiveThreadCount
-uint16 receivePort
-string receiveMessageTopicName
-string sendMessageTopicName
----
-bool result

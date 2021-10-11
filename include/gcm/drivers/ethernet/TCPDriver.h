@@ -18,7 +18,7 @@ namespace gcm {
         TCPDriver();
         ~TCPDriver();
         virtual void listen();
-        virtual bool send(NetworkMessage);
+        virtual bool send(gcm_msgs::NetworkMessage);
         void setTargetAddress(std::string ipAddress, int port){
             this->targetAddress = boost::asio::ip::address::from_string(ipAddress);
             this->targetPort = port;

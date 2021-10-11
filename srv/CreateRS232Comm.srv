@@ -1,7 +1,0 @@
-string device
-uint16 baudrate
-uint8 receiveThreadCount
-string receiveMessageTopicName
-string sendMessageTopicName
----
-bool result
