@@ -8,7 +8,7 @@ For now you can communicate with protocols below;
 * TCP
 * RS232
 
-GCM is implemented with heavily used optimized async boost functions.   
+GCM is implemented with optimized async boost functions.   
 
 ## 2) Dependencies
 * roscpp
